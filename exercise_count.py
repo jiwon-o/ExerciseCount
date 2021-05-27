@@ -38,17 +38,44 @@ with mp_pose.Pose(
     try:
         landmarks = results.pose_landmarks.landmark   # 랜드마크 좌표 추출
             
-        # 각각의 좌표 저장
-        shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]   # 왼쪽 어깨 좌표(x,y) 저장
-        elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]   # 왼쪽 팔꿈치 좌표(x,y) 저장
-        wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]   # 왼쪽 손목 좌표(x,y) 저장
+        ### 각각의 좌표 저장 ###
+        # 왼쪽 팔
+        left_shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]   # 왼쪽 어깨 좌표(x,y) 저장
+        left_elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]   # 왼쪽 팔꿈치 좌표(x,y) 저장
+        left_wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]   # 왼쪽 손목 좌표(x,y) 저장
         
-        # 각도 계산
-        left_arm_angle = calculate_angle(shoulder, elbow, wrist)   # 왼쪽 어깨, 팔꿈치, 손목의 각도 계산
-        
-        # 각도 커스텀 출력
-        cv2.putText(image, str(left_arm_angle),
-            tuple(np.multiply(elbow, [640, 480]).astype(int)),   # 팔꿈치 부분에 Text 출력
+        # 오른쪽 팔
+        right_shoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]   # 오른쪽 어깨 좌표(x,y) 저장
+        right_elbow = [landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].y]   # 오른쪽 팔꿈치 좌표(x,y) 저장
+        right_wrist = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x,landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]   # 오른쪽 손목 좌표(x,y) 저장
+
+        # 왼쪽 다리
+        left_hip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]   # 왼쪽 힙 좌표(x,y) 저장
+        left_knee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y]   # 왼쪽 무릎 좌표(x,y) 저장
+        left_ankle = [landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x,landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y]   # 왼쪽 발목 좌표(x,y) 저장
+
+
+        ### 각도 계산 ###
+        left_arm_angle = calculate_angle(left_shoulder, left_elbow, left_wrist)   # 왼쪽 어깨, 팔꿈치, 손목의 각도 계산
+        right_arm_angle = calculate_angle(right_shoulder, right_elbow, right_wrist)   # 오른쪽 어깨, 팔꿈치, 손목의 각도 계산
+        left_leg_angle = calculate_angle(left_hip, left_knee, left_ankle)   # 왼쪽 힙, 무릎, 발목의 각도 계산
+
+        ### 각도 커스텀 출력 ###
+        # 왼쪽 팔
+        cv2.putText(image, str(left_arm_angle),   
+            tuple(np.multiply(left_elbow, [640, 480]).astype(int)),   # 팔꿈치 부분에 Text 출력
+            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA
+        )
+
+        # 오른쪽 팔
+        cv2.putText(image, str(right_arm_angle),   
+            tuple(np.multiply(right_elbow, [640, 480]).astype(int)),   # 팔꿈치 부분에 Text 출력
+            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA
+        )
+
+        # 왼쪽 다리
+        cv2.putText(image, str(left_leg_angle),
+            tuple(np.multiply(left_knee, [640, 480]).astype(int)),   # 무릎 부분에 Text 출력
             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA
         )
                        
